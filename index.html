@@ -461,11 +461,12 @@
 
       <div class="meter">
         <svg class="meter-svg" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid meet">
-          <!-- background arc -->
-          <path class="arc-bg" d="M 52 110 A 160 160 0 0 1 348 110"/>
+          <!-- background arc: radius 100, centered at (200,110), sweep ±45° -->
+          <!-- (matches the tick ring so ticks align all the way to the ends) -->
+          <path class="arc-bg" d="M 129.3 39.3 A 100 100 0 0 0 270.7 39.3"/>
           <g id="ticks"></g>
-          <text class="zone-label flat"  x="24"  y="98">flat</text>
-          <text class="zone-label sharp" x="376" y="98" text-anchor="end">sharp</text>
+          <text class="zone-label flat"  x="129" y="58" text-anchor="middle">flat</text>
+          <text class="zone-label sharp" x="271" y="58" text-anchor="middle">sharp</text>
           <g id="needleGroup">
             <line class="needle-line" id="needleLine" x1="200" y1="110" x2="200" y2="20"/>
             <circle class="needle-pivot" cx="200" cy="110" r="5"/>
