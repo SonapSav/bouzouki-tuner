@@ -311,11 +311,10 @@
   .meter-svg .needle-pivot-inner {
     fill: var(--bg);
   }
-  .meter-svg #needleGroup {
-    transition: transform 0.12s cubic-bezier(.3,.2,.2,1);
-    transform-origin: 200px 110px;
-    transform-box: fill-box;
-  }
+  /* #needleGroup rotation is driven by the SVG `transform` attribute */
+  /* (rotate angle, 200, 110). Do NOT add CSS transform / transform-origin */
+  /* here — mixing the two causes the pivot to drift mid-animation. */
+  /* Smoothness is handled by frame-rate JS interpolation in updateUI. */
 
   .cents-readout {
     text-align: center;
@@ -707,8 +706,9 @@ function updateUI(freq) {
 
   const refFreq = freqFromMidi(refMidi);
   const rawCents = centsBetween(freq, refMidi);
-  // Smoothing (low-pass)
-  smoothedCents = smoothedCents * 0.55 + rawCents * 0.45;
+  // Smoothing (low-pass). Heavier smoothing since the needle no longer has
+  // a CSS transition — JS interpolation is now doing all the easing work.
+  smoothedCents = smoothedCents * 0.72 + rawCents * 0.28;
   const displayCents = Math.round(smoothedCents);
 
   // Note name
