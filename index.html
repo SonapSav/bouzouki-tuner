@@ -460,17 +460,17 @@
       </div>
 
       <div class="meter">
-        <svg class="meter-svg" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid meet">
-          <!-- background arc: radius 100, centered at (200,110), sweep ±45° -->
-          <!-- (matches the tick ring so ticks align all the way to the ends) -->
-          <path class="arc-bg" d="M 129.3 39.3 A 100 100 0 0 0 270.7 39.3"/>
+        <svg class="meter-svg" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid meet">
+          <!-- Pivot at (200, 150), radius 130, sweep ±67.5° (135° total). -->
+          <!-- Arc endpoints: (79.9, 100.3) → (320.1, 100.3) -->
+          <path class="arc-bg" d="M 79.9 100.3 A 130 130 0 0 1 320.1 100.3"/>
           <g id="ticks"></g>
-          <text class="zone-label flat"  x="129" y="58" text-anchor="middle">flat</text>
-          <text class="zone-label sharp" x="271" y="58" text-anchor="middle">sharp</text>
+          <text class="zone-label flat"  x="80"  y="120" text-anchor="middle">flat</text>
+          <text class="zone-label sharp" x="320" y="120" text-anchor="middle">sharp</text>
           <g id="needleGroup">
-            <line class="needle-line" id="needleLine" x1="200" y1="110" x2="200" y2="20"/>
-            <circle class="needle-pivot" cx="200" cy="110" r="5"/>
-            <circle class="needle-pivot-inner" cx="200" cy="110" r="1.8"/>
+            <line class="needle-line" id="needleLine" x1="200" y1="150" x2="200" y2="30"/>
+            <circle class="needle-pivot" cx="200" cy="150" r="6"/>
+            <circle class="needle-pivot-inner" cx="200" cy="150" r="2"/>
           </g>
         </svg>
         <div class="cents-readout" id="centsReadout">
@@ -546,14 +546,17 @@ const el = {
    METER TICKS (drawn once)
    ========================================================== */
 function drawTicks() {
-  const cx = 200, cy = 110, rInner = 85, rOuter = 96, rLabel = 74;
+  // Geometry must match the SVG: pivot (200,150), sweep ±67.5° for ±50 cents.
+  const cx = 200, cy = 150;
+  const rInner = 112, rOuter = 125, rLabel = 100;
+  const SWEEP_DEG = 67.5;
   el.ticks.innerHTML = '';
   const ns = 'http://www.w3.org/2000/svg';
   for (let c = -50; c <= 50; c += 5) {
     const isMajor  = c % 10 === 0;
     const isCenter = c === 0;
-    const angle = (c / 50) * 45 * Math.PI / 180;
-    const r1 = isMajor ? rInner : rInner + 4;
+    const angle = (c / 50) * SWEEP_DEG * Math.PI / 180;
+    const r1 = isMajor ? rInner : rInner + 5;
     const r2 = rOuter;
     const x1 = cx + r1 * Math.sin(angle);
     const y1 = cy - r1 * Math.cos(angle);
@@ -562,7 +565,7 @@ function drawTicks() {
     const line = document.createElementNS(ns, 'line');
     line.setAttribute('x1', x1); line.setAttribute('y1', y1);
     line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-    line.setAttribute('stroke-width', isCenter ? 1.5 : isMajor ? 1 : 0.6);
+    line.setAttribute('stroke-width', isCenter ? 1.8 : isMajor ? 1.1 : 0.7);
     line.setAttribute('class', 'tick ' + (isCenter ? 'center' : isMajor ? 'major' : 'minor'));
     el.ticks.appendChild(line);
 
@@ -679,7 +682,7 @@ function setSilent() {
   el.targetVal.textContent  = '—';
   el.centsVal.textContent   = '—';
   el.centsReadout.classList.remove('in-tune');
-  el.needleGroup.setAttribute('transform', 'rotate(0, 200, 110)');
+  el.needleGroup.setAttribute('transform', 'rotate(0, 200, 150)');
   el.needleLine.classList.remove('in-tune');
   smoothedCents = 0;
   renderStrings(-1);
@@ -729,10 +732,10 @@ function updateUI(freq) {
   el.centsVal.textContent  = (displayCents > 0 ? '+' : displayCents < 0 ? '' : ' ') + displayCents;
   el.centsReadout.classList.toggle('in-tune', inTune);
 
-  // Needle
+  // Needle: map ±50 cents to ±67.5° of rotation, pivot at (200, 150)
   const clamped = Math.max(-50, Math.min(50, smoothedCents));
-  const angle   = (clamped / 50) * 45;
-  el.needleGroup.setAttribute('transform', `rotate(${angle.toFixed(2)}, 200, 110)`);
+  const angle   = (clamped / 50) * 67.5;
+  el.needleGroup.setAttribute('transform', `rotate(${angle.toFixed(2)}, 200, 150)`);
   el.needleLine.classList.toggle('in-tune', inTune);
 
   // Haptic buzz on first in-tune achievement, throttled
