@@ -4,8 +4,8 @@ A free, ad-free chromatic tuner for the Greek bouzouki, built as a progressive w
 
 Supports both common Greek bouzouki tunings:
 
-- **Tetrachordo (4-course)** — C₃ F₃ A₃ D₄
-- **Trichordo (3-course)** — D₃ A₃ D₄
+- **Tetrachordo (4-strings)** — C₃ F₃ A₃ D₄
+- **Trichordo (3-strings)** — D₃ A₃ D₄
 
 ![screenshot](screenshot.png)
 
